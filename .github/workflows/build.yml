@@ -43,6 +43,7 @@ jobs:
     - name: Buildx
       if: success() && !contains(steps.prepare.outputs.version, 'master')
       run: |
+        KUBECTL_VERSION=$(echo "${{ steps.prepare.outputs.version }}" | sed -e 's/-.*$//')
         VERSION=$(echo "${{ steps.prepare.outputs.version }}" | sed -e 's/^v//' | sed -e 's/-.*$//')
         docker buildx build \
           --output type=image,name=${{ steps.prepare.outputs.docker_image }},push=true \
@@ -50,7 +51,7 @@ jobs:
           --tag "${{ steps.prepare.outputs.docker_image }}:$VERSION" \
           --tag "${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.hash }}" \
           --tag "${{ steps.prepare.outputs.docker_image }}:latest" \
-          --build-arg KUBECTL_VERSION="$VERSION" \
+          --build-arg KUBECTL_VERSION="$KUBECTL_VERSION" \
           --file Dockerfile .
 
     - name: Create Release
