@@ -1,6 +1,8 @@
 #!/bin/sh
 
-KUBECTL_VERSION="$1"
+KUBECTL_VERSION=$1
+
+[ -z "$KUBECTL_VERSION" ] && KUBECTL_VERSION=`curl -L -s https://dl.k8s.io/release/stable.txt`
 
 case `arch` in
 x86_64)
@@ -11,11 +13,15 @@ aarch64)
     ;;
 esac  
 
-if [ -z "$TARGETPLATFORM"] ; then
+if [ -z "$TARGETPLATFORM" ] ; then
 echo "Unknown arch: `arch`"
 exit 1
 fi   
 
-curl -LOs https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/${TARGETPLATFORM}/kubectl
-chmod +x ./kubectl
-mv ./kubectl /usr/local/bin/kubectl
+URL="https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/${TARGETPLATFORM}/kubectl"
+
+echo "Download $URL"
+
+wget $URL \
+ && chmod +x ./kubectl \
+ && mv ./kubectl /usr/local/bin/kubectl
