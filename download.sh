@@ -2,7 +2,7 @@
 
 KUBECTL_VERSION=$1
 
-[ -z "$KUBECTL_VERSION" ] && KUBECTL_VERSION=`curl -L -s https://dl.k8s.io/release/stable.txt`
+[ -z "$KUBECTL_VERSION" ] && KUBECTL_VERSION=`wget -q -O - https://dl.k8s.io/release/stable.txt`
 
 case `arch` in
 x86_64)
@@ -25,3 +25,11 @@ echo "Download $URL"
 wget $URL \
  && chmod +x ./kubectl \
  && mv ./kubectl /usr/local/bin/kubectl
+
+URL="https://github.com/jetstack/cert-manager/releases/latest/download/kubectl-cert_manager-linux-${TARGETPLATFORM}.tar.gz" 
+wget -O kubectl-cert-manager.tar.gz $URL \
+  && tar xvzf kubectl-cert-manager.tar.gz \
+  && chmod +x kubectl-cert_manager \
+  && mv kubectl-cert_manager /usr/local/bin \
+  && rm -rf kubectl-cert_manager \
+  && rm kubectl-cert-manager.tar.gz

@@ -19,8 +19,11 @@ RUN apk update && apk add \
    update-ca-certificates && \
    rm -rf /var/cache/apk/*
 
-RUN adduser -D -u 1000 user 
+RUN adduser -D -u 1000 user
+
+WORKDIR /home/user
 
 COPY --from=builder /usr/local/bin/kubectl /usr/local/bin/kubectl
+COPY --from=builder /usr/local/bin/kubectl-cert_manager /usr/local/bin/kubectl-cert_manager
 
 USER user
